@@ -1,5 +1,5 @@
 #include <mavsdk/mavsdk.h>
-#include <mavsdk/plugins/mavlink_passthrough/mavlink_passthrough.h> //direct mavlinik access
+#include <mavsdk/plugins/mavlink_passthrough/mavlink_passthrough.h> //direct mavlink access
 #include <mavsdk/plugins/telemetry/telemetry.h>
 #include <chrono>
 #include <iostream>
@@ -22,22 +22,11 @@ void usage(const std::string& bin_name)
               << "For example, to connect to the simulator use URL: udpin://0.0.0.0:14540\n";
 }
 
-/*void choose_interval(){
-    bool isLoraMode = 0; //wifi=0, lora=1
-    if (isLoraMode == 0){
-        msg_interval = 1000000.0f;
-    }
-    else if (isLoraMode == 1){
-        msg_interval = -1; 
-    }
-}*/
-    
 int main(int argc, char** argv, float msg_interval){
     //create instance of Mavsdk with configuration
     Mavsdk mavsdk{Mavsdk::Configuration{Mavsdk::ComponentType::CompanionComputer}}; 
     
-
-    ConnectionResult conn_result = mavsdk.add_any_connection(argv[1]); //first argument
+    ConnectionResult conn_result = mavsdk.add_any_connection(argv[1]); //define port when running in terminal as the first argument
     if (conn_result != ConnectionResult::Success){
         std::cerr << "Connection failed " << conn_result << std::endl;
         return 1;
@@ -61,42 +50,13 @@ int main(int argc, char** argv, float msg_interval){
     command_req.target_sysid = mavlink_passthrough.get_target_sysid();
     command_req.target_compid = mavlink_passthrough.get_target_compid();
     command_req.command = MAV_CMD_SET_MESSAGE_INTERVAL; 
-    command_req.param1 = 147;//236; //message ID
-    //command_req.param2 = msg_interval; //message stream interval; depends on mode
-    command_req.param2 = 5000000.0f;
+    command_req.param1 = 147; //message ID, 147 is BATTERY_STATUS
+    command_req.param2 = 5000000.0f; //interval in microseconds, define as -1 to disable streaming
     command_req.param3 = 0;
     command_req.param4 = 0;
     command_req.param5 = 0;
     command_req.param6 = 0;
     command_req.param7 = 0;
-    /*command_req.target_sysid = mavlink_passthrough.get_target_sysid();
-    command_req.target_compid = mavlink_passthrough.get_target_compid();
-    command_req.command = MAV_CMD_COMPONENT_ARM_DISARM; 
-    command_req.param1 = 1;//236; //message ID
-    //command_req.param2 = msg_interval; //message stream interval; depends on mode
-    command_req.param2 = 0;//5000000.0f;
-    command_req.param3 = 0;
-    command_req.param4 = 0;
-    command_req.param5 = 0;
-    command_req.param6 = 0;
-    command_req.param7 = 0;*/
-
-    /*auto result = mavlink_passthrough.send_command_long(command_req);
-    if (result == MavlinkPassthrough::Result::Success) {
-        std::cout << "Command sent successfully!" << std::endl;
-    } else {
-        std::cerr << "Failed to send command: " << static_cast<int>(result) << std::endl;
-    }  
-    sleep(2);
-    
-    /*
-    auto result = mavlink_passthrough.send_command_long(command_req);
-    std::cout << "Command sent" << std::endl;
-    if (result == MavlinkPassthrough::Result::Success) {
-        std::cout << "Command sent successfully!" << std::endl;
-    } else {
-        std::cerr << "Failed to send command: " << static_cast<int>(result) << std::endl;
-    }*/
    auto result = mavlink_passthrough.send_command_long(command_req);
 if (result == MavlinkPassthrough::Result::Success) {
     // Set up message handler to wait for ACK
