@@ -26,7 +26,7 @@ int main(int argc, char** argv, float msg_interval){
     //create instance of Mavsdk with configuration
     Mavsdk mavsdk{Mavsdk::Configuration{Mavsdk::ComponentType::CompanionComputer}}; 
     
-    ConnectionResult conn_result = mavsdk.add_any_connection(argv[1]); //define port when running in terminal as the first argument
+    ConnectionResult conn_result = mavsdk.add_any_connection(argv[1]); //define port when running in terminal as the first argument, use udp://:14540 for companion computer
     if (conn_result != ConnectionResult::Success){
         std::cerr << "Connection failed " << conn_result << std::endl;
         return 1;
