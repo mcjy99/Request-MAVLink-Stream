@@ -1,7 +1,5 @@
-"""
-Example: Set that a message is streamed at particular rate
-"""
-
+# Example: Set that a message is streamed at particular rate 
+# Derived from: https://mavlink.io/en/mavgen_python/howto_requestmessages.html
 from pymavlink import mavutil
 
 # Start a connection listening on a UDP port
@@ -19,8 +17,8 @@ message = connection.mav.command_long_encode(
         connection.target_component,  # Target component ID
         mavutil.mavlink.MAV_CMD_SET_MESSAGE_INTERVAL,  # ID of command to send
         0,  # Confirmation
-        mavutil.mavlink.MAVLINK_MSG_ID_LR_HEARTBEAT,  # param1: Message ID to be streamed
-        1000000, # param2: Interval in microseconds
+        mavutil.mavlink.MAVLINK_MSG_ID_BATTERY_STATUS,  # param1: Message ID to be streamed
+        1000000, # param2: Interval in microseconds, use -1 to disable stream
         0,       # param3 (unused)
         0,       # param4 (unused)
         0,       # param5 (unused)
